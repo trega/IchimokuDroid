@@ -1,12 +1,14 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DataContainer {
     private static final int INITIAL_SAMPLES_NUMBER = 500;
     private ArrayList<StockRecord> stockRecords;
     private ArrayList<ChartPoint> tekanSen;
     private ArrayList<ChartPoint> kijunSen;
+    private ArrayList<ChartPoint> chikouSpan;
 
     public DataContainer(){
         stockRecords = new ArrayList<StockRecord>(INITIAL_SAMPLES_NUMBER);
@@ -70,11 +72,21 @@ public class DataContainer {
         return senList;
     }
 
+    void calculateChikouSpan(){
+        long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
+        chikouSpan = new ArrayList<ChartPoint>(stockRecords.size());
+        for(int i = 0; i<stockRecords.size(); ++i){
+            StockRecord sr = stockRecords.get(i);
+            ChartPoint cp = new ChartPoint(new Date(sr.date.getTime()- 26*timeStep), sr.close);
+            chikouSpan.add(cp);
+        }
+    }
+
     void calculateTekanSen(){
         tekanSen = calculateSen(9);
     }
     void calculateKijunSen(){
-        kijunSen = calculateSen(24);
+        kijunSen = calculateSen(26);
     }
 
     public ArrayList<ChartPoint> getTekanSen() {
@@ -83,5 +95,9 @@ public class DataContainer {
 
     public ArrayList<ChartPoint> getKijunSen() {
         return kijunSen;
+    }
+
+    public ArrayList<ChartPoint> getChikouSpan() {
+        return chikouSpan;
     }
 }

@@ -65,4 +65,12 @@ public class DataCenter {
     public ArrayList<ChartPoint> getKijunSen() {
         return itsDataContainer.getKijunSen();
     }
+
+    public void prepareChkouSpan() {
+        itsDataContainer.calculateChikouSpan();
+    }
+
+    public ArrayList<ChartPoint> getChikouSpan() {
+        return itsDataContainer.getChikouSpan();
+    }
 }
