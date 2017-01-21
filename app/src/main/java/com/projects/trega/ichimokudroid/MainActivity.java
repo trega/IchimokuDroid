@@ -1,5 +1,6 @@
 package com.projects.trega.ichimokudroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import com.projects.trega.ichimokudroid.DataProvider.DataDownloader;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     DataDownloader itsDataDownloader;
@@ -52,5 +55,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void dataReady(File stockFile) {
+        Intent intent = new Intent(this, ChartActivity.class);
+        intent.putExtra(CommonInterface.STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
+        startActivity(intent);
     }
 }

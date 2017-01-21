@@ -1,5 +1,7 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
+import android.support.v7.app.AppCompatActivity;
+
 import com.projects.trega.ichimokudroid.MainActivity;
 
 import java.io.File;
@@ -11,14 +13,14 @@ import java.io.File;
  */
 
 public class DataCenter {
-    MainActivity itsActivity;
+    AppCompatActivity itsActivity;
     DataDownloader itsDataDownloader;
     FileParser itsFileParser;
     DataContainer itsDataContainer;
     File stockFile;
 
 
-    public DataCenter(MainActivity mainActivity) {
+    public DataCenter(AppCompatActivity mainActivity) {
         itsActivity = mainActivity;
         itsDataDownloader = new DataDownloader(this);
         itsFileParser = new FileParser();
@@ -30,8 +32,16 @@ public class DataCenter {
         itsDataDownloader.downloadDataFile(itsActivity.getApplicationContext());
     }
 
+
+
     public void fileAquireFinished(File currentStockFile) {
         stockFile = currentStockFile;
+//        itsFileParser.parseFile(stockFile, itsDataContainer);
+        ((MainActivity)itsActivity).dataReady(stockFile);
+    }
+
+    public void parseStockDataFile(File itsStockFile) {
+        stockFile = itsStockFile;
         itsFileParser.parseFile(stockFile, itsDataContainer);
     }
 }
