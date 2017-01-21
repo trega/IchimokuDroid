@@ -24,6 +24,12 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20150119&d2=20170119&i=d";
     private InputStreamVolleyRequest request;
     int count;
+    File currentStockFile;
+    DataCenter itsDataCenter;
+
+    public DataDownloader(DataCenter dataCenter) {
+        itsDataCenter = dataCenter;
+    }
 
     public Boolean downloadDataFile(Context ctx){
 
@@ -61,9 +67,9 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                     //covert reponse to input stream
                     InputStream input = new ByteArrayInputStream(response);
                     File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-                    File file = new File(path, filename+".txt");
-                    map.put("resume_path", file.toString());
-                    BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file));
+                    currentStockFile = new File(path, filename+".txt");
+                    map.put("resume_path", currentStockFile.toString());
+                    BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(currentStockFile));
                     byte data[] = new byte[1024];
 
                     long total = 0;
@@ -77,6 +83,7 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
 
                     output.close();
                     input.close();
+                    itsDataCenter.fileAquireFinished(currentStockFile);
                 }catch(IOException e){
                     e.printStackTrace();
 

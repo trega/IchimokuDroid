@@ -9,14 +9,16 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import com.projects.trega.ichimokudroid.DataProvider.DataDownloader;
 
 public class MainActivity extends AppCompatActivity {
     DataDownloader itsDataDownloader;
+    DataCenter itsDataCenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        itsDataDownloader = new DataDownloader();
+        itsDataCenter = new DataCenter(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -25,9 +27,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                itsDataDownloader.downloadDataFile(getApplicationContext());
+                itsDataCenter.acquireData();
             }
         });
     }
