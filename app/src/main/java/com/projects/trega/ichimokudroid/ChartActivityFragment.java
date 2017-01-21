@@ -36,6 +36,8 @@ public class ChartActivityFragment extends Fragment {
     private LineGraphSeries<DataPoint> kijunSenSeries;
     private LineGraphSeries<DataPoint> closeSeries;
     private LineGraphSeries<DataPoint> chikouSpanSeries;
+    private LineGraphSeries<DataPoint> senokuSpanASeries;
+    private LineGraphSeries<DataPoint> senokuSpanBSeries;
 
     public ChartActivityFragment() {
     }
@@ -70,15 +72,18 @@ public class ChartActivityFragment extends Fragment {
         tekanSenSeries = new LineGraphSeries<>();
         kijunSenSeries = new LineGraphSeries<>();
         chikouSpanSeries = new LineGraphSeries<>();
+        senokuSpanASeries = new LineGraphSeries<>();
         closeSeries = prepareCloseSeries(dataLength, onDataPointTapListener);
         prepareViewPort(dataLength);
         prepareLabels();
         prepareSenSeries(onDataPointTapListener);
         prepareChikouSpanSeries(onDataPointTapListener);
+        prepareSenokuASpanSeries(onDataPointTapListener);
         itsMainGraphView.addSeries(closeSeries);
         itsMainGraphView.addSeries(tekanSenSeries);
         itsMainGraphView.addSeries(kijunSenSeries);
         itsMainGraphView.addSeries(chikouSpanSeries);
+        itsMainGraphView.addSeries(senokuSpanASeries);
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
     }
@@ -98,6 +103,23 @@ public class ChartActivityFragment extends Fragment {
         //series.setDrawDataPoints(true);
         series.setColor(Color.GRAY);
         chikouSpanSeries = series;
+    }
+
+    private void prepareSenokuASpanSeries(OnDataPointTapListener onDataPointTapListener) {
+        itsDataCenter.prepareSenokuASpan();
+        ArrayList<ChartPoint> senokuASpan = itsDataCenter.getSenokuSpanA();
+        int dataLength = senokuASpan.size();
+        DataPoint dataPoints[] = new DataPoint[dataLength];
+        for (int i = 0; i<dataLength; ++i){
+            ChartPoint cp = senokuASpan.get(i);
+            dataPoints[i] = new DataPoint(cp.date, cp.value);
+        }
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
+        series.setTitle("Senoku Span A");
+        series.setOnDataPointTapListener(onDataPointTapListener);
+        //series.setDrawDataPoints(true);
+        series.setColor(Color.CYAN);
+        senokuSpanASeries = series;
     }
 
     private void prepareLabels() {

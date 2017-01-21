@@ -9,7 +9,7 @@ public class DataContainer {
     private ArrayList<ChartPoint> tekanSen;
     private ArrayList<ChartPoint> kijunSen;
     private ArrayList<ChartPoint> chikouSpan;
-    private ArrayList<ChartPoint> senkouSpanA;
+    private ArrayList<ChartPoint> senokuSpanA;
     private ArrayList<StockRecord> stockRecordsFull;
 
     public DataContainer(){
@@ -77,11 +77,15 @@ public class DataContainer {
 
     void calculateSenkouSpanA(){
         long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
-        senkouSpanA = new ArrayList<ChartPoint>(stockRecords.size());
-        int offset = 26;
-        for (int i = offset; i < stockRecords.size(); ++i){
+        senokuSpanA = new ArrayList<ChartPoint>(stockRecords.size());
+        int kijunOffset = 26;
+        int tekanOffset = 9;
+        for (int i = kijunOffset; i < stockRecords.size(); ++i){
             ChartPoint st = stockRecords.get(i);
-
+            ChartPoint kijun = kijunSen.get(i-kijunOffset);
+            ChartPoint tekan = tekanSen.get(i - tekanOffset);
+            ChartPoint senoku = new ChartPoint(new Date(st.date.getTime() + 26*timeStep), avgClosePrice(kijun, tekan));
+            senokuSpanA.add(senoku);
         }
     }
 
@@ -116,5 +120,9 @@ public class DataContainer {
 
     public void addStockRecordFull(StockRecord stockRecord) {
         stockRecordsFull.add(stockRecord);
+    }
+
+    public ArrayList<ChartPoint> getSenokuSpanA() {
+        return senokuSpanA;
     }
 }

@@ -73,4 +73,12 @@ public class DataCenter {
     public ArrayList<ChartPoint> getChikouSpan() {
         return itsDataContainer.getChikouSpan();
     }
+
+    public void prepareSenokuASpan() {
+        itsDataContainer.calculateSenkouSpanA();
+    }
+
+    public ArrayList<ChartPoint> getSenokuSpanA() {
+        return itsDataContainer.getSenokuSpanA();
+    }
 }
