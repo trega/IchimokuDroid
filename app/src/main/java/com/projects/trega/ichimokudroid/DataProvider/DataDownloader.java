@@ -1,0 +1,90 @@
+package com.projects.trega.ichimokudroid.DataProvider;
+
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
+public class DataDownloader implements Response.Listener<byte[]>, Response.ErrorListener {
+    private final String TAG = "DATA_DOWNLOADER";
+    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20150119&d2=20170119&i=d";
+    private InputStreamVolleyRequest request;
+    int count;
+
+    public Boolean downloadDataFile(Context ctx){
+
+        request = new InputStreamVolleyRequest(Request.Method.GET, dataCenterAddress,
+                DataDownloader.this, DataDownloader.this, null);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(ctx, new HurlStack());
+        mRequestQueue.add(request);
+        return true;
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Log.e(TAG, "UNABLE TO DOWNLOAD FILE. ERROR:: " + error.getMessage());
+    }
+
+    @Override
+    public void onResponse(byte[] response) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        try {
+            if (response!=null) {
+
+                //Read file name from headers
+                String content =request.responseHeaders.get("Content-Disposition")
+                        .toString();
+                StringTokenizer st = new StringTokenizer(content, "=");
+                String[] arrTag = st.toArray();
+
+                String filename = arrTag[1];
+                filename = filename.replace(":", ".");
+                Log.d("DEBUG::RESUME FILE NAME", filename);
+
+                try{
+                    long lenghtOfFile = response.length;
+
+                    //covert reponse to input stream
+                    InputStream input = new ByteArrayInputStream(response);
+                    File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+                    File file = new File(path, filename+".txt");
+                    map.put("resume_path", file.toString());
+                    BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file));
+                    byte data[] = new byte[1024];
+
+                    long total = 0;
+
+                    while ((count = input.read(data)) != -1) {
+                        total += count;
+                        output.write(data, 0, count);
+                    }
+
+                    output.flush();
+
+                    output.close();
+                    input.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+
+                }
+            }
+        } catch (Exception e) {
+            Log.d("KEY_ERROR", "UNABLE TO DOWNLOAD FILE");
+            e.printStackTrace();
+        }
+    }
+}
