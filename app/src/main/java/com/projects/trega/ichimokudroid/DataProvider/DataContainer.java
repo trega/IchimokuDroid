@@ -10,6 +10,7 @@ public class DataContainer {
     private ArrayList<ChartPoint> kijunSen;
     private ArrayList<ChartPoint> chikouSpan;
     private ArrayList<ChartPoint> senokuSpanA;
+    private ArrayList<ChartPoint> senokuSpanB;
     private ArrayList<StockRecord> stockRecordsFull;
 
     public DataContainer(){
@@ -89,6 +90,20 @@ public class DataContainer {
         }
     }
 
+    void calculateSenkouSpanB(){
+        long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
+        senokuSpanB = new ArrayList<ChartPoint>(stockRecords.size());
+        int kijunOffset = 26;
+        int offset = 52;
+        for (int i = offset; i < stockRecords.size(); ++i){
+            ChartPoint st = stockRecords.get(i);
+            ChartPoint stMax = maxCloseInIdxRange(i-offset, i);
+            ChartPoint stMin = minCloseInIdxRange(i-offset, i);
+            double val = avgClosePrice(stMax, stMin);
+            senokuSpanB.add(new ChartPoint(new Date(st.date.getTime() + kijunOffset*timeStep), val));
+        }
+    }
+
     void calculateChikouSpan(){
         long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
         chikouSpan = new ArrayList<ChartPoint>(stockRecords.size());
@@ -124,5 +139,9 @@ public class DataContainer {
 
     public ArrayList<ChartPoint> getSenokuSpanA() {
         return senokuSpanA;
+    }
+
+    public ArrayList<ChartPoint> getSenokuSpanB() {
+        return senokuSpanB;
     }
 }

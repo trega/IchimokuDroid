@@ -73,17 +73,20 @@ public class ChartActivityFragment extends Fragment {
         kijunSenSeries = new LineGraphSeries<>();
         chikouSpanSeries = new LineGraphSeries<>();
         senokuSpanASeries = new LineGraphSeries<>();
+        senokuSpanBSeries = new LineGraphSeries<>();
         closeSeries = prepareCloseSeries(dataLength, onDataPointTapListener);
         prepareViewPort(dataLength);
         prepareLabels();
         prepareSenSeries(onDataPointTapListener);
         prepareChikouSpanSeries(onDataPointTapListener);
         prepareSenokuASpanSeries(onDataPointTapListener);
+        prepareSenokuBSpanSeries(onDataPointTapListener);
         itsMainGraphView.addSeries(closeSeries);
         itsMainGraphView.addSeries(tekanSenSeries);
         itsMainGraphView.addSeries(kijunSenSeries);
         itsMainGraphView.addSeries(chikouSpanSeries);
         itsMainGraphView.addSeries(senokuSpanASeries);
+        itsMainGraphView.addSeries(senokuSpanBSeries);
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
     }
@@ -120,6 +123,23 @@ public class ChartActivityFragment extends Fragment {
         //series.setDrawDataPoints(true);
         series.setColor(Color.CYAN);
         senokuSpanASeries = series;
+    }
+
+    private void prepareSenokuBSpanSeries(OnDataPointTapListener onDataPointTapListener) {
+        itsDataCenter.prepareSenokuBSpan();
+        ArrayList<ChartPoint> senokuBSpan = itsDataCenter.getSenokuSpanB();
+        int dataLength = senokuBSpan.size();
+        DataPoint dataPoints[] = new DataPoint[dataLength];
+        for (int i = 0; i<dataLength; ++i){
+            ChartPoint cp = senokuBSpan.get(i);
+            dataPoints[i] = new DataPoint(cp.date, cp.value);
+        }
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
+        series.setTitle("Senoku Span B");
+        series.setOnDataPointTapListener(onDataPointTapListener);
+        //series.setDrawDataPoints(true);
+        series.setColor(Color.MAGENTA);
+        senokuSpanBSeries = series;
     }
 
     private void prepareLabels() {
