@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 File tmpFile = new File(defaultDataFilePath);
-                if(true || !tmpFile.exists())
+                if(!tmpFile.exists())
                     itsDataCenter.acquireData();
                 else {
                     itsStockFile=tmpFile;

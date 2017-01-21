@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class DataContainer {
     private static final int INITIAL_SAMPLES_NUMBER = 500;
     private ArrayList<StockRecord> stockRecords;
+    private ArrayList<ChartPoint> tekanSen;
 
     public DataContainer(){
         stockRecords = new ArrayList<StockRecord>(INITIAL_SAMPLES_NUMBER);
@@ -20,5 +21,9 @@ public class DataContainer {
 
     public StockRecord getStockRekord(int i) {
         return stockRecords.get(i);
+    }
+
+    void calculateTekanSen(){
+
     }
 }
