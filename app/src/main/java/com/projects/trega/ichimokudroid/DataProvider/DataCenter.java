@@ -50,7 +50,7 @@ public class DataCenter {
         return itsDataContainer.getDataLength();
     }
 
-    public StockRecord getStockRecord(int i) {
+    public ChartPoint getStockRecord(int i) {
         return itsDataContainer.getStockRekord(i);
     }
 

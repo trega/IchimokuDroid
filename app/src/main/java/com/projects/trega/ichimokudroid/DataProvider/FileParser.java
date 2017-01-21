@@ -22,12 +22,15 @@ public class FileParser {
         try {
             String line;
             StockRecord stockRecord;
+            ChartPoint chartPoint;
             //Remove header
             reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] RowData = line.split(",");
                 stockRecord = new StockRecord(RowData[0],RowData[1],RowData[2],RowData[3],RowData[4],RowData[5]);
-                container.addStockRecord(stockRecord);
+                chartPoint = new ChartPoint(RowData[0], RowData[4]);
+                container.addStockRecord(chartPoint);
+                container.addStockRecordFull(stockRecord);
             }
 
         }

@@ -145,8 +145,8 @@ public class ChartActivityFragment extends Fragment {
     private LineGraphSeries<DataPoint> prepareCloseSeries(int dataLength, OnDataPointTapListener onDataPointTapListener) {
         DataPoint dataPoints[] = new DataPoint[dataLength];
         for (int i = 0; i<dataLength; ++i){
-            StockRecord sr = itsDataCenter.getStockRecord(i);
-            dataPoints[i] = new DataPoint(sr.date, sr.close);
+            ChartPoint sr = itsDataCenter.getStockRecord(i);
+            dataPoints[i] = new DataPoint(sr.date, sr.value);
         }
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
