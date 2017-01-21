@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 public class DataDownloader implements Response.Listener<byte[]>, Response.ErrorListener {
     private final String TAG = "DATA_DOWNLOADER";
-    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20150119&d2=20170119&i=d";
+    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20160119&d2=20170119&i=d";
     private InputStreamVolleyRequest request;
     int count;
     File currentStockFile;
