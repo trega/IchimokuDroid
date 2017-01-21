@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.projects.trega.ichimokudroid.MainActivity;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by tomek on 21.01.2017.
@@ -51,5 +52,17 @@ public class DataCenter {
 
     public StockRecord getStockRecord(int i) {
         return itsDataContainer.getStockRekord(i);
+    }
+
+    public void prepareSenSeries() {
+        itsDataContainer.prepareSenLists();
+    }
+
+    public ArrayList<ChartPoint> getTekanSen() {
+        return itsDataContainer.getTekanSen();
+    }
+
+    public ArrayList<ChartPoint> getKijunSen() {
+        return itsDataContainer.getKijunSen();
     }
 }

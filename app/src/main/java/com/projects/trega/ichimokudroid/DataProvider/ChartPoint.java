@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class ChartPoint {
     public Date date;
-    double value;
+    public double value;
     public ChartPoint(String aDate, String aVal){
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -16,5 +16,10 @@ public class ChartPoint {
             e.printStackTrace();
         }
         value = new Double(aVal);
+    }
+
+    public ChartPoint(Date date, double val) {
+        this.date=date;
+        this.value=val;
     }
 }

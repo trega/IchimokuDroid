@@ -1,5 +1,6 @@
 package com.projects.trega.ichimokudroid;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,12 @@ import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
+import com.projects.trega.ichimokudroid.DataProvider.ChartPoint;
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import com.projects.trega.ichimokudroid.DataProvider.StockRecord;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -29,6 +32,9 @@ public class ChartActivityFragment extends Fragment {
     GraphView itsMainGraphView;
     ChartActivity itsActivity;
     DataCenter itsDataCenter;
+    private LineGraphSeries<DataPoint> tekanSenSeries;
+    private LineGraphSeries<DataPoint> kijunSenSeries;
+    private LineGraphSeries<DataPoint> closeSeries;
 
     public ChartActivityFragment() {
     }
@@ -50,13 +56,25 @@ public class ChartActivityFragment extends Fragment {
     }
 
     private void drawMainChart() {
+        OnDataPointTapListener onDataPointTapListener = new OnDataPointTapListener() {
+            @Override
+            public void onTap(Series series, DataPointInterface dataPoint) {
+                Date date = new Date((long)(dataPoint.getX()));
+                String formattedDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
+                Toast.makeText(getActivity(), series.getTitle() + ":\nX="+formattedDate + "\nY="+dataPoint.getY()
+                        , Toast.LENGTH_LONG).show();
+            }
+        };
         final int dataLength = itsDataCenter.getDataLength();
-        LineGraphSeries<DataPoint> closeSeries = prepareCloseSeries(dataLength);
+        tekanSenSeries = new LineGraphSeries<>();
+        kijunSenSeries = new LineGraphSeries<>();
+        closeSeries = prepareCloseSeries(dataLength, onDataPointTapListener);
         prepareViewPort(dataLength);
         prepareLabels();
-
-
+        prepareSenSeries(onDataPointTapListener);
         itsMainGraphView.addSeries(closeSeries);
+        itsMainGraphView.addSeries(tekanSenSeries);
+        itsMainGraphView.addSeries(kijunSenSeries);
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
     }
@@ -77,8 +95,33 @@ public class ChartActivityFragment extends Fragment {
         itsMainGraphView.getViewport().setXAxisBoundsManual(true);
     }
 
+    private void prepareSenSeries(OnDataPointTapListener onDataPointTapListener) {
+        itsDataCenter.prepareSenSeries();
+        ArrayList<ChartPoint> tekanSen = itsDataCenter.getTekanSen();
+        ArrayList<ChartPoint> kijunSen = itsDataCenter.getKijunSen();
+
+        tekanSenSeries = prepareSenSerie(onDataPointTapListener, tekanSen, "Tekan Sen", Color.GREEN);
+        kijunSenSeries = prepareSenSerie(onDataPointTapListener, kijunSen, "Kijun Sen", Color.RED);
+    }
+
     @NonNull
-    private LineGraphSeries<DataPoint> prepareCloseSeries(int dataLength) {
+    private LineGraphSeries<DataPoint> prepareSenSerie(OnDataPointTapListener onDataPointTapListener, ArrayList<ChartPoint> data, String title, int color) {
+        int dataLength = data.size();
+        DataPoint dataPoints[] = new DataPoint[dataLength];
+        for (int i = 0; i<dataLength; ++i){
+            ChartPoint cp = data.get(i);
+            dataPoints[i] = new DataPoint(cp.date, cp.value);
+        }
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
+        series.setTitle(title);
+        series.setOnDataPointTapListener(onDataPointTapListener);
+        //series.setDrawDataPoints(true);
+        series.setColor(color);
+        return series;
+    }
+
+    @NonNull
+    private LineGraphSeries<DataPoint> prepareCloseSeries(int dataLength, OnDataPointTapListener onDataPointTapListener) {
         DataPoint dataPoints[] = new DataPoint[dataLength];
         for (int i = 0; i<dataLength; ++i){
             StockRecord sr = itsDataCenter.getStockRecord(i);
@@ -87,15 +130,6 @@ public class ChartActivityFragment extends Fragment {
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
         series.setTitle("Close");
-        OnDataPointTapListener onDataPointTapListener = new OnDataPointTapListener() {
-            @Override
-            public void onTap(Series series, DataPointInterface dataPoint) {
-                Date date = new Date((long)(dataPoint.getX()));
-                String formattedDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-                Toast.makeText(getActivity(), series.getTitle() + ":\nX="+formattedDate + "\nY="+dataPoint.getY()
-                        , Toast.LENGTH_LONG).show();
-            }
-        };
         series.setOnDataPointTapListener(onDataPointTapListener);
         //series.setDrawDataPoints(true);
         return series;
