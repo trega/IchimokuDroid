@@ -44,4 +44,12 @@ public class DataCenter {
         stockFile = itsStockFile;
         itsFileParser.parseFile(stockFile, itsDataContainer);
     }
+
+    public int getDataLength() {
+        return itsDataContainer.getDataLength();
+    }
+
+    public StockRecord getStockRecord(int i) {
+        return itsDataContainer.getStockRekord(i);
+    }
 }

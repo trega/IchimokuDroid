@@ -13,4 +13,12 @@ public class DataContainer {
     public void addStockRecord(StockRecord record){
         stockRecords.add(record);
     }
+
+    public int getDataLength() {
+        return stockRecords.size();
+    }
+
+    public StockRecord getStockRekord(int i) {
+        return stockRecords.get(i);
+    }
 }
