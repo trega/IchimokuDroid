@@ -6,9 +6,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import com.projects.trega.ichimokudroid.DataProvider.DataDownloader;
@@ -16,8 +18,10 @@ import com.projects.trega.ichimokudroid.DataProvider.DataDownloader;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+    static String TAG ="MAIN_ACTIVITY";
     DataDownloader itsDataDownloader;
     DataCenter itsDataCenter;
+    File itsStockFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +34,16 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itsDataCenter.acquireData();
+
+                if((itsStockFile ==null) || (!itsStockFile.getAbsoluteFile().exists()))
+                    itsDataCenter.acquireData();
+                else {
+                    String message = "File already exists, not downloading again: " + itsStockFile.getAbsolutePath();
+                    Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
+                    toast.show();
+                    Log.d(TAG, message);
+                    dataReady(itsStockFile);
+                }
             }
         });
     }
@@ -58,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dataReady(File stockFile) {
+        itsStockFile = stockFile;
         Intent intent = new Intent(this, ChartActivity.class);
         intent.putExtra(CommonInterface.STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
         startActivity(intent);

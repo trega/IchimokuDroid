@@ -13,8 +13,9 @@ import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import java.io.File;
 
 public class ChartActivity extends AppCompatActivity {
-    DataCenter itsDataCenter;
-    File itsStockFile;
+
+    DataCenter itsDataCenter = null;
+    File itsStockFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +37,18 @@ public class ChartActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String stockDataFileName = intent.getStringExtra(CommonInterface.STOCK_DATA_FILE_NAME);
+        prepareChartData(stockDataFileName);
+
+    }
+
+    private void prepareChartData(String stockDataFileName) {
         itsStockFile = new File(stockDataFileName);
         itsDataCenter = new DataCenter(this);
         itsDataCenter.parseStockDataFile(itsStockFile);
+    }
 
+    public DataCenter getDataCenter() {
+        return itsDataCenter;
     }
 
 }
