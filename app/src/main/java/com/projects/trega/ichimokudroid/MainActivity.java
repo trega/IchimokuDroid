@@ -22,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     DataDownloader itsDataDownloader;
     DataCenter itsDataCenter;
     File itsStockFile;
+
+    private String defaultDataFilePath = "/storage/emulated/0/Documents/cdr_d.csv.txt";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if((itsStockFile ==null) || (!itsStockFile.getAbsoluteFile().exists()))
+                File tmpFile = new File(defaultDataFilePath);
+                if(!tmpFile.exists())
                     itsDataCenter.acquireData();
                 else {
+                    itsStockFile=tmpFile;
                     String message = "File already exists, not downloading again: " + itsStockFile.getAbsolutePath();
                     Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG);
                     toast.show();
