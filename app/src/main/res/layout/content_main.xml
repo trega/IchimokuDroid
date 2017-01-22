@@ -22,7 +22,7 @@
         android:fontFamily="casual"
         android:layout_alignParentStart="true" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/symbolValEt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,5 +35,8 @@
         android:contentDescription="symbol name to be downloaded"
         android:textSize="18sp"
         android:textAlignment="viewStart"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:dropDownHeight="wrap_content">
+        <requestFocus />
+    </AutoCompleteTextView>
 </RelativeLayout>

@@ -182,3 +182,5 @@ public class DataContainer {
         return entry_string;
     }
 }
+
+//TODO: account for weekends in shifted indicators (I guess these should be const?) - we could always be taking dates from original serie

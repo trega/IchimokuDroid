@@ -37,6 +37,8 @@ public class ChartActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String stockDataFileName = intent.getStringExtra(CommonInterface.STOCK_DATA_FILE_NAME);
+        String symbolName = intent.getStringExtra(CommonInterface.STOCK_DATA_SYMBOL);
+        this.setTitle(symbolName);
         prepareChartData(stockDataFileName);
 
     }

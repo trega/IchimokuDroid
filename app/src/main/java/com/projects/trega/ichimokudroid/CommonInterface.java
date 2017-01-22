@@ -6,4 +6,5 @@ package com.projects.trega.ichimokudroid;
 
 public  class CommonInterface {
     public static String STOCK_DATA_FILE_NAME = "com.projects.trega.ichimokudroid.customextras.STOCK_DATA_FILE_NAME";
+    public static String STOCK_DATA_SYMBOL = "com.projects.trega.ichimokudroid.customextras.STOCK_DATA_SYMBOL";
 }

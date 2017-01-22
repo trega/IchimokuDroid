@@ -6,9 +6,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private String dataFileName;
     private String dataFilePath;
     private DownloadParametersBoundle downloadParametersBundle;
+    private final String[] symbols ={"YOL", "WAS", "DPL", "OPF", "MEX", "LVC", "WPL", "TIM", "APR",
+    "KSG", "TRK", "CAR", "RES", "PFL", "IPT", "CDR", "CLN", "MRC", "MLK", "COG", "UNI", "KTY", "GPW",
+    "GTN", "PBG", "ALM", "RDL", "PKN", "ACT", "JSW"};
 
 
     @Override
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        initializeSymbolEditBox();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -65,8 +72,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeSymbolEditBox() {
+        AutoCompleteTextView symbolNameEt = (AutoCompleteTextView) findViewById(R.id.symbolValEt);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this,android.R.layout.simple_list_item_1,symbols);
+        symbolNameEt.setThreshold(0);
+        symbolNameEt.setAdapter(adapter);
+        symbolNameEt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                ((AutoCompleteTextView)v).showDropDown();
+                return true;
+            }
+        });
+    }
+
     private void extractDownloadParameters() {
-        EditText symbolNameEt = (EditText)findViewById(R.id.symbolValEt);
+        AutoCompleteTextView symbolNameEt = (AutoCompleteTextView) findViewById(R.id.symbolValEt);
         symbolName = symbolNameEt.getText().toString();
 
 
@@ -114,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         itsStockFile = stockFile;
         Intent intent = new Intent(this, ChartActivity.class);
         intent.putExtra(STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
+        intent.putExtra(STOCK_DATA_SYMBOL, symbolName);
         startActivity(intent);
     }
 }
