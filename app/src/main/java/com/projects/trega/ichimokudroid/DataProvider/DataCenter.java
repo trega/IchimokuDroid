@@ -2,6 +2,7 @@ package com.projects.trega.ichimokudroid.DataProvider;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 import com.projects.trega.ichimokudroid.MainActivity;
 
 import java.io.File;
@@ -30,8 +31,8 @@ public class DataCenter {
     }
 
 
-    public void acquireData(String symbolName) {
-        itsDataDownloader.downloadDataFile(symbolName, itsActivity.getApplicationContext());
+    public void acquireData(DownloadParametersBoundle params) {
+        itsDataDownloader.downloadDataFile(params, itsActivity.getApplicationContext());
     }
 
 

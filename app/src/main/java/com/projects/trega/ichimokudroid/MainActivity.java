@@ -16,6 +16,11 @@ import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 import com.projects.trega.ichimokudroid.DataProvider.DataDownloader;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.projects.trega.ichimokudroid.CommonInterface.*;
 
 public class MainActivity extends AppCompatActivity {
     static String TAG ="MAIN_ACTIVITY";
@@ -25,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String symbolName;
     private String dataFileName;
-    private String dataFilePath = "/storage/emulated/0/Documents/cdr_d.csv.txt";
+    private String dataFilePath;
+    private DownloadParametersBoundle downloadParametersBundle;
 
 
     @Override
@@ -41,14 +47,11 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText symbolNameEt = (EditText)findViewById(R.id.symbolValEt);
-                symbolName = symbolNameEt.getText().toString();
-                dataFileName = symbolName + "_d.csv.txt";
-                dataFilePath = "/storage/emulated/0/Documents/" + dataFileName;
+                extractDownloadParameters();
 
                 File tmpFile = new File(dataFilePath);
                 if(!tmpFile.exists()) {
-                    itsDataCenter.acquireData(symbolName);
+                    itsDataCenter.acquireData(downloadParametersBundle);
                 }
                 else {
                     itsStockFile=tmpFile;
@@ -60,6 +63,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void extractDownloadParameters() {
+        EditText symbolNameEt = (EditText)findViewById(R.id.symbolValEt);
+        symbolName = symbolNameEt.getText().toString();
+
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentTime = c.getTime();
+        c.add(Calendar.YEAR, -1);
+        Date yearBackTime = c.getTime();
+        String formattedDateCurrent = df.format(currentTime);
+        String[] currentDateArray = formattedDateCurrent.split("-");
+        String formattedDatePast = df.format(yearBackTime);
+        String[] pastDateArray = formattedDatePast.split("-");
+        downloadParametersBundle = new DownloadParametersBoundle(
+                symbolName, currentDateArray[0], currentDateArray[1], currentDateArray[2],
+                pastDateArray[0], pastDateArray[1], pastDateArray[2]);
+        dataFileName = symbolName + "_d.csv_"+downloadParametersBundle.getPastDateDownloadString()+
+                "_"+downloadParametersBundle.getCurrentDateDownloadString()+".txt";
+        dataFilePath = "/storage/emulated/0/Documents/" + dataFileName;
+
     }
 
     @Override
@@ -87,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     public void dataReady(File stockFile) {
         itsStockFile = stockFile;
         Intent intent = new Intent(this, ChartActivity.class);
-        intent.putExtra(CommonInterface.STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
+        intent.putExtra(STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
         startActivity(intent);
     }
 }

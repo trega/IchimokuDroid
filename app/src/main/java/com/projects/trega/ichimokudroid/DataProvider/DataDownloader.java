@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
+import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 public class DataDownloader implements Response.Listener<byte[]>, Response.ErrorListener {
+    DownloadParametersBoundle downloadParametersBoundle;
     private final String TAG = "DATA_DOWNLOADER";
     private final String baseDataCenterAddress = "http://stooq.com/";
     private final String appendix1 = "q/d/l/?s=";
@@ -34,8 +36,12 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
         itsDataCenter = dataCenter;
     }
 
-    public Boolean downloadDataFile(String symbolName, Context ctx){
-        String dataCenterAddress = baseDataCenterAddress + appendix1 + symbolName + suffix;
+    public Boolean downloadDataFile(DownloadParametersBoundle parametersBundle, Context ctx){
+        downloadParametersBoundle = parametersBundle;
+        String dataCenterAddress = baseDataCenterAddress + appendix1 + parametersBundle.symbol+
+                "&d1="+parametersBundle.getPastDateDownloadString()+
+                "&d2="+parametersBundle.getCurrentDateDownloadString()+
+                "&i=d";
         request = new InputStreamVolleyRequest(Request.Method.GET, dataCenterAddress,
                 DataDownloader.this, DataDownloader.this, null);
         RequestQueue mRequestQueue = Volley.newRequestQueue(ctx, new HurlStack());
@@ -62,6 +68,8 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
 
                 String filename = arrTag[1];
                 filename = filename.replace(":", ".");
+                filename+="_"+downloadParametersBoundle.getPastDateDownloadString();
+                filename+="_"+downloadParametersBoundle.getCurrentDateDownloadString();
                 Log.d("DEBUG::RESUME FILE NAME", filename);
 
                 try{
