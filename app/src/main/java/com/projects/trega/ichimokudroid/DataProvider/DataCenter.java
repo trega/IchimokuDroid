@@ -54,10 +54,6 @@ public class DataCenter {
         return itsDataContainer.getStockRekord(i);
     }
 
-    public void prepareSenSeries() {
-        itsDataContainer.prepareSenLists();
-    }
-
     public ArrayList<ChartPoint> getTekanSen() {
         return itsDataContainer.getTekanSen();
     }
@@ -88,5 +84,17 @@ public class DataCenter {
 
     public ArrayList<ChartPoint> getSenokuSpanB() {
         return itsDataContainer.getSenokuSpanB();
+    }
+
+    public ArrayList<ChartPoint> getStockRecords() {
+        return itsDataContainer.getStockRecords();
+    }
+
+    public void prepareTekanSen() {
+        itsDataContainer.calculateTekanSen();
+    }
+
+    public void prepareKijunSen() {
+        itsDataContainer.calculateKijunSen();
     }
 }

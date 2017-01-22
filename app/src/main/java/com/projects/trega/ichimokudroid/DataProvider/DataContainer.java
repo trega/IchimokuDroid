@@ -30,11 +30,6 @@ public class DataContainer {
         return stockRecords.get(i);
     }
 
-    public void prepareSenLists(){
-        calculateTekanSen();
-        calculateKijunSen();
-    }
-
     ChartPoint maxCloseInIdxRange(int start, int end){
         double max = -1;
         int max_idx = -1;
@@ -78,7 +73,7 @@ public class DataContainer {
 
     void calculateSenkouSpanA(){
         long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
-        senokuSpanA = new ArrayList<ChartPoint>(stockRecords.size());
+        senokuSpanA = new ArrayList<>(stockRecords.size());
         int kijunOffset = 26;
         int tekanOffset = 9;
         for (int i = kijunOffset; i < stockRecords.size(); ++i){
@@ -92,7 +87,7 @@ public class DataContainer {
 
     void calculateSenkouSpanB(){
         long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
-        senokuSpanB = new ArrayList<ChartPoint>(stockRecords.size());
+        senokuSpanB = new ArrayList<>(stockRecords.size());
         int kijunOffset = 26;
         int offset = 52;
         for (int i = offset; i < stockRecords.size(); ++i){
@@ -106,7 +101,7 @@ public class DataContainer {
 
     void calculateChikouSpan(){
         long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
-        chikouSpan = new ArrayList<ChartPoint>(stockRecords.size());
+        chikouSpan = new ArrayList<>(stockRecords.size());
         for(int i = 0; i<stockRecords.size(); ++i){
             ChartPoint sr = stockRecords.get(i);
             ChartPoint cp = new ChartPoint(new Date(sr.date.getTime()- 26*timeStep), sr.value);
@@ -114,7 +109,7 @@ public class DataContainer {
         }
     }
 
-    void calculateTekanSen(){
+    public void calculateTekanSen(){
         tekanSen = calculateSen(9);
     }
     void calculateKijunSen(){
@@ -141,7 +136,7 @@ public class DataContainer {
         return senokuSpanA;
     }
 
-    public ArrayList<ChartPoint> getSenokuSpanB() {
-        return senokuSpanB;
-    }
+    public ArrayList<ChartPoint> getSenokuSpanB() { return senokuSpanB; }
+
+    public ArrayList<ChartPoint> getStockRecords() { return stockRecords; }
 }

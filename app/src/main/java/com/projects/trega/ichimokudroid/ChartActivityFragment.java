@@ -38,6 +38,16 @@ public class ChartActivityFragment extends Fragment {
     private LineGraphSeries<DataPoint> chikouSpanSeries;
     private LineGraphSeries<DataPoint> senokuSpanASeries;
     private LineGraphSeries<DataPoint> senokuSpanBSeries;
+    private OnDataPointTapListener onDataPointTapListener;
+
+    public enum EChartSerie {
+        CLOSE_VAL,
+        TEKAN_SEN,
+        KIJUN_SEN,
+        CHIKOU_SPAN,
+        SENOKU_SPAN_A,
+        SENOKU_SPAN_B
+    }
 
     public ChartActivityFragment() {
     }
@@ -58,8 +68,8 @@ public class ChartActivityFragment extends Fragment {
         drawMainChart();
     }
 
-    private void drawMainChart() {
-        OnDataPointTapListener onDataPointTapListener = new OnDataPointTapListener() {
+    private void prepareCallbacks() {
+        onDataPointTapListener = new OnDataPointTapListener() {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
                 Date date = new Date((long)(dataPoint.getX()));
@@ -68,78 +78,78 @@ public class ChartActivityFragment extends Fragment {
                         , Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    private void drawMainChart() {
         final int dataLength = itsDataCenter.getDataLength();
-        tekanSenSeries = new LineGraphSeries<>();
-        kijunSenSeries = new LineGraphSeries<>();
-        chikouSpanSeries = new LineGraphSeries<>();
-        senokuSpanASeries = new LineGraphSeries<>();
-        senokuSpanBSeries = new LineGraphSeries<>();
-        closeSeries = prepareCloseSeries(dataLength, onDataPointTapListener);
+        prepareCallbacks();
+        prepareSeries();
         prepareViewPort(dataLength);
         prepareLabels();
-        prepareSenSeries(onDataPointTapListener);
-        prepareChikouSpanSeries(onDataPointTapListener);
-        prepareSenokuASpanSeries(onDataPointTapListener);
-        prepareSenokuBSpanSeries(onDataPointTapListener);
-        itsMainGraphView.addSeries(closeSeries);
-        itsMainGraphView.addSeries(tekanSenSeries);
-        itsMainGraphView.addSeries(kijunSenSeries);
-        itsMainGraphView.addSeries(chikouSpanSeries);
-        itsMainGraphView.addSeries(senokuSpanASeries);
-        itsMainGraphView.addSeries(senokuSpanBSeries);
+        addSeries();
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
     }
 
-    private void prepareChikouSpanSeries(OnDataPointTapListener onDataPointTapListener) {
-        itsDataCenter.prepareChkouSpan();
-        ArrayList<ChartPoint> chikouSpan = itsDataCenter.getChikouSpan();
-        int dataLength = chikouSpan.size();
-        DataPoint dataPoints[] = new DataPoint[dataLength];
-        for (int i = 0; i<dataLength; ++i){
-            ChartPoint cp = chikouSpan.get(i);
-            dataPoints[i] = new DataPoint(cp.date, cp.value);
+    private LineGraphSeries<DataPoint> prepareGenericSeries(EChartSerie indicator){
+        ArrayList<ChartPoint> indicatorData=null;
+        String title = null;
+        int color = 0;
+        switch (indicator){
+            case CHIKOU_SPAN:
+                itsDataCenter.prepareChkouSpan();
+                indicatorData = itsDataCenter.getChikouSpan();
+                title = new String("Chikou Span");
+                color = Color.LTGRAY;
+                break;
+            case SENOKU_SPAN_A:
+                itsDataCenter.prepareSenokuASpan();
+                indicatorData = itsDataCenter.getSenokuSpanA();
+                title = new String("Senoku Span A");
+                color = Color.CYAN;
+                break;
+            case SENOKU_SPAN_B:
+                itsDataCenter.prepareSenokuBSpan();
+                indicatorData = itsDataCenter.getSenokuSpanB();
+                title = new String("Senoku Span B");
+                color = Color.MAGENTA;
+                break;
+            case CLOSE_VAL:
+                indicatorData = itsDataCenter.getStockRecords();
+                title = "Close price";
+                color = Color.BLUE;
+                break;
+            case TEKAN_SEN:
+                itsDataCenter.prepareTekanSen();
+                indicatorData = itsDataCenter.getTekanSen();
+                title = "Tekan Sen";
+                color = Color.GREEN;
+                break;
+            case KIJUN_SEN:
+                itsDataCenter.prepareKijunSen();
+                indicatorData = itsDataCenter.getKijunSen();
+                title = "Kijun Sen";
+                color = Color.RED;
+                break;
+
+
         }
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setTitle("Chikou Span");
-        series.setOnDataPointTapListener(onDataPointTapListener);
-        //series.setDrawDataPoints(true);
-        series.setColor(Color.GRAY);
-        chikouSpanSeries = series;
+        return produceLineGraphSerie(indicatorData, title, color);
     }
 
-    private void prepareSenokuASpanSeries(OnDataPointTapListener onDataPointTapListener) {
-        itsDataCenter.prepareSenokuASpan();
-        ArrayList<ChartPoint> senokuASpan = itsDataCenter.getSenokuSpanA();
-        int dataLength = senokuASpan.size();
+    @NonNull
+    private LineGraphSeries<DataPoint> produceLineGraphSerie(ArrayList<ChartPoint> indicatorData, String title, int color) {
+        int dataLength = indicatorData.size();
         DataPoint dataPoints[] = new DataPoint[dataLength];
         for (int i = 0; i<dataLength; ++i){
-            ChartPoint cp = senokuASpan.get(i);
+            ChartPoint cp = indicatorData.get(i);
             dataPoints[i] = new DataPoint(cp.date, cp.value);
         }
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setTitle("Senoku Span A");
+        series.setTitle(title);
         series.setOnDataPointTapListener(onDataPointTapListener);
-        //series.setDrawDataPoints(true);
-        series.setColor(Color.CYAN);
-        senokuSpanASeries = series;
-    }
-
-    private void prepareSenokuBSpanSeries(OnDataPointTapListener onDataPointTapListener) {
-        itsDataCenter.prepareSenokuBSpan();
-        ArrayList<ChartPoint> senokuBSpan = itsDataCenter.getSenokuSpanB();
-        int dataLength = senokuBSpan.size();
-        DataPoint dataPoints[] = new DataPoint[dataLength];
-        for (int i = 0; i<dataLength; ++i){
-            ChartPoint cp = senokuBSpan.get(i);
-            dataPoints[i] = new DataPoint(cp.date, cp.value);
-        }
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setTitle("Senoku Span B");
-        series.setOnDataPointTapListener(onDataPointTapListener);
-        //series.setDrawDataPoints(true);
-        series.setColor(Color.MAGENTA);
-        senokuSpanBSeries = series;
+        series.setColor(color);
+        return series;
     }
 
     private void prepareLabels() {
@@ -152,49 +162,31 @@ public class ChartActivityFragment extends Fragment {
         itsMainGraphView.getViewport().setScrollable(true);
         itsMainGraphView.getViewport().setScalableY(true);
         itsMainGraphView.getViewport().setScrollableY(true);
-        // set manual x bounds to have nice steps
         itsMainGraphView.getViewport().setMinX(itsDataCenter.getStockRecord(0).date.getTime());
         itsMainGraphView.getViewport().setMaxX(itsDataCenter.getStockRecord(dataLength-1).date.getTime());
         itsMainGraphView.getViewport().setXAxisBoundsManual(true);
     }
 
-    private void prepareSenSeries(OnDataPointTapListener onDataPointTapListener) {
-        itsDataCenter.prepareSenSeries();
-        ArrayList<ChartPoint> tekanSen = itsDataCenter.getTekanSen();
-        ArrayList<ChartPoint> kijunSen = itsDataCenter.getKijunSen();
-
-        tekanSenSeries = prepareSenSerie(onDataPointTapListener, tekanSen, "Tekan Sen", Color.GREEN);
-        kijunSenSeries = prepareSenSerie(onDataPointTapListener, kijunSen, "Kijun Sen", Color.RED);
+    private void addSeries() {
+        itsMainGraphView.addSeries(closeSeries);
+        itsMainGraphView.addSeries(tekanSenSeries);
+        itsMainGraphView.addSeries(kijunSenSeries);
+        itsMainGraphView.addSeries(chikouSpanSeries);
+        itsMainGraphView.addSeries(senokuSpanASeries);
+        itsMainGraphView.addSeries(senokuSpanBSeries);
     }
 
-    @NonNull
-    private LineGraphSeries<DataPoint> prepareSenSerie(OnDataPointTapListener onDataPointTapListener, ArrayList<ChartPoint> data, String title, int color) {
-        int dataLength = data.size();
-        DataPoint dataPoints[] = new DataPoint[dataLength];
-        for (int i = 0; i<dataLength; ++i){
-            ChartPoint cp = data.get(i);
-            dataPoints[i] = new DataPoint(cp.date, cp.value);
-        }
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setTitle(title);
-        series.setOnDataPointTapListener(onDataPointTapListener);
-        //series.setDrawDataPoints(true);
-        series.setColor(color);
-        return series;
-    }
-
-    @NonNull
-    private LineGraphSeries<DataPoint> prepareCloseSeries(int dataLength, OnDataPointTapListener onDataPointTapListener) {
-        DataPoint dataPoints[] = new DataPoint[dataLength];
-        for (int i = 0; i<dataLength; ++i){
-            ChartPoint sr = itsDataCenter.getStockRecord(i);
-            dataPoints[i] = new DataPoint(sr.date, sr.value);
-        }
-
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
-        series.setTitle("Close");
-        series.setOnDataPointTapListener(onDataPointTapListener);
-        //series.setDrawDataPoints(true);
-        return series;
+    private void prepareSeries() {
+        tekanSenSeries = new LineGraphSeries<>();
+        kijunSenSeries = new LineGraphSeries<>();
+        chikouSpanSeries = new LineGraphSeries<>();
+        senokuSpanASeries = new LineGraphSeries<>();
+        senokuSpanBSeries = new LineGraphSeries<>();
+        closeSeries = prepareGenericSeries(EChartSerie.CLOSE_VAL);
+        tekanSenSeries = prepareGenericSeries(EChartSerie.TEKAN_SEN);
+        kijunSenSeries = prepareGenericSeries(EChartSerie.KIJUN_SEN);
+        chikouSpanSeries = prepareGenericSeries(EChartSerie.CHIKOU_SPAN);
+        senokuSpanASeries = prepareGenericSeries(EChartSerie.SENOKU_SPAN_A);
+        senokuSpanBSeries = prepareGenericSeries(EChartSerie.SENOKU_SPAN_B);
     }
 }
