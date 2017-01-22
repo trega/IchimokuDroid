@@ -74,7 +74,7 @@ public class DataContainer {
     }
 
     void calculateSenkouSpanA(){
-        long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
+        long timeStep = calculateTimeStep();
         senokuSpanA = new ArrayList<>(stockRecords.size());
         int kijunOffset = 26;
         int tekanOffset = 9;
@@ -88,7 +88,7 @@ public class DataContainer {
     }
 
     void calculateSenkouSpanB(){
-        long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
+        long timeStep = calculateTimeStep();
         senokuSpanB = new ArrayList<>(stockRecords.size());
         int kijunOffset = 26;
         int offset = 52;
@@ -102,13 +102,18 @@ public class DataContainer {
     }
 
     void calculateChikouSpan(){
-        long timeStep = stockRecords.get(1).date.getTime() - stockRecords.get(0).date.getTime();
+        long timeStep = calculateTimeStep();
         chikouSpan = new ArrayList<>(stockRecords.size());
         for(int i = 0; i<stockRecords.size(); ++i){
             ChartPoint sr = stockRecords.get(i);
             ChartPoint cp = new ChartPoint(new Date(sr.date.getTime()- 26*timeStep), sr.value);
             chikouSpan.add(cp);
         }
+    }
+
+    private long calculateTimeStep() {
+        return stockRecords.get(stockRecords.size()-1).date.getTime() -
+                    stockRecords.get(stockRecords.size()-2).date.getTime();
     }
 
     public void calculateTekanSen(){
