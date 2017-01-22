@@ -6,6 +6,7 @@ import com.projects.trega.ichimokudroid.MainActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by tomek on 21.01.2017.
@@ -96,5 +97,9 @@ public class DataCenter {
 
     public void prepareKijunSen() {
         itsDataContainer.calculateKijunSen();
+    }
+
+    public String findEntryByDateStr(Date date) {
+        return itsDataContainer.findEntryByDateStr(date);
     }
 }

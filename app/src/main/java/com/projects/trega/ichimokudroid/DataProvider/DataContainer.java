@@ -1,5 +1,7 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
+import com.jjoe64.graphview.series.DataPoint;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -139,4 +141,39 @@ public class DataContainer {
     public ArrayList<ChartPoint> getSenokuSpanB() { return senokuSpanB; }
 
     public ArrayList<ChartPoint> getStockRecords() { return stockRecords; }
+
+    public String findEntryByDateStr(Date date) {
+        String entry_string = new String();
+        for(int i = 0; i <stockRecords.size(); ++i){
+            ChartPoint dp = stockRecords.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nClosing price: " + dp.value);
+        }
+        for(int i = 0; i <tekanSen.size(); ++i){
+            ChartPoint dp = tekanSen.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nTekan Sen: " + dp.value);
+        }
+        for(int i = 0; i <kijunSen.size(); ++i){
+            ChartPoint dp = kijunSen.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nKijun Sen: " + dp.value);
+        }
+        for(int i = 0; i <chikouSpan.size(); ++i){
+            ChartPoint dp = chikouSpan.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nChikou Span: " + dp.value);
+        }
+        for(int i = 0; i <senokuSpanA.size(); ++i){
+            ChartPoint dp = senokuSpanA.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nSenoku Span A: " + dp.value);
+        }
+        for(int i = 0; i <senokuSpanB.size(); ++i){
+            ChartPoint dp = senokuSpanB.get(i);
+            if(dp.date.equals(date))
+                entry_string += new String ("\nSenoku Span B: " + dp.value);
+        }
+        return entry_string;
+    }
 }

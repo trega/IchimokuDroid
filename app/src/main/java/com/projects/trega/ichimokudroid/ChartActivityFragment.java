@@ -1,13 +1,14 @@
 package com.projects.trega.ichimokudroid;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
@@ -19,15 +20,11 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 import com.projects.trega.ichimokudroid.DataProvider.ChartPoint;
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
-import com.projects.trega.ichimokudroid.DataProvider.StockRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class ChartActivityFragment extends Fragment {
     GraphView itsMainGraphView;
     ChartActivity itsActivity;
@@ -39,6 +36,7 @@ public class ChartActivityFragment extends Fragment {
     private LineGraphSeries<DataPoint> senokuSpanASeries;
     private LineGraphSeries<DataPoint> senokuSpanBSeries;
     private OnDataPointTapListener onDataPointTapListener;
+    private View rootFragmentView;
 
     public enum EChartSerie {
         CLOSE_VAL,
@@ -55,7 +53,7 @@ public class ChartActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootFragmentView = inflater.inflate(R.layout.fragment_chart, container, false);
+        rootFragmentView = inflater.inflate(R.layout.fragment_chart, container, false);
         itsMainGraphView = (GraphView) rootFragmentView.findViewById(R.id.main_graph);
         return rootFragmentView;
     }
@@ -72,10 +70,19 @@ public class ChartActivityFragment extends Fragment {
         onDataPointTapListener = new OnDataPointTapListener() {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
+
                 Date date = new Date((long)(dataPoint.getX()));
+                String entryStr = itsDataCenter.findEntryByDateStr(date);
                 String formattedDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-                Toast.makeText(getActivity(), series.getTitle() + ":\nX="+formattedDate + "\nY="+dataPoint.getY()
-                        , Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Date: " + formattedDate + entryStr)
+                        .setTitle("Entry Details").setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         };
     }
@@ -86,9 +93,32 @@ public class ChartActivityFragment extends Fragment {
         prepareSeries();
         prepareViewPort(dataLength);
         prepareLabels();
+        setThicknessAll(3);
+        adjustStyling();
+
         addSeries();
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
+    }
+
+    private void adjustStyling() {
+        return;
+//        Paint paint = new Paint();
+//        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+//        paint.setStrokeWidth(10);
+//        paint.setPathEffect(new DashPathEffect(new float[]{8, 5}, 0));
+//        senokuSpanASeries.setCustomPaint(paint);
+//        itsMainGraphView.getGraphContentHeight();
+
+    }
+
+    private void setThicknessAll(int thickness) {
+        closeSeries.setThickness(thickness);
+        tekanSenSeries.setThickness(thickness);
+        kijunSenSeries.setThickness(thickness);
+        chikouSpanSeries.setThickness(thickness);
+        senokuSpanASeries.setThickness(thickness);
+        senokuSpanBSeries.setThickness(thickness);
     }
 
     private LineGraphSeries<DataPoint> prepareGenericSeries(EChartSerie indicator){
@@ -99,19 +129,19 @@ public class ChartActivityFragment extends Fragment {
             case CHIKOU_SPAN:
                 itsDataCenter.prepareChkouSpan();
                 indicatorData = itsDataCenter.getChikouSpan();
-                title = new String("Chikou Span");
+                title = "Chikou Span";
                 color = Color.LTGRAY;
                 break;
             case SENOKU_SPAN_A:
                 itsDataCenter.prepareSenokuASpan();
                 indicatorData = itsDataCenter.getSenokuSpanA();
-                title = new String("Senoku Span A");
+                title = "Senoku Span A";
                 color = Color.CYAN;
                 break;
             case SENOKU_SPAN_B:
                 itsDataCenter.prepareSenokuBSpan();
                 indicatorData = itsDataCenter.getSenokuSpanB();
-                title = new String("Senoku Span B");
+                title = "Senoku Span B";
                 color = Color.MAGENTA;
                 break;
             case CLOSE_VAL:
@@ -131,8 +161,6 @@ public class ChartActivityFragment extends Fragment {
                 title = "Kijun Sen";
                 color = Color.RED;
                 break;
-
-
         }
         return produceLineGraphSerie(indicatorData, title, color);
     }
@@ -147,7 +175,7 @@ public class ChartActivityFragment extends Fragment {
         }
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
         series.setTitle(title);
-        series.setOnDataPointTapListener(onDataPointTapListener);
+//        series.setOnDataPointTapListener(onDataPointTapListener);
         series.setColor(color);
         return series;
     }
@@ -162,8 +190,8 @@ public class ChartActivityFragment extends Fragment {
         itsMainGraphView.getViewport().setScrollable(true);
         itsMainGraphView.getViewport().setScalableY(true);
         itsMainGraphView.getViewport().setScrollableY(true);
-        itsMainGraphView.getViewport().setMinX(itsDataCenter.getStockRecord(0).date.getTime());
-        itsMainGraphView.getViewport().setMaxX(itsDataCenter.getStockRecord(dataLength-1).date.getTime());
+        itsMainGraphView.getViewport().setMinX(chikouSpanSeries.getLowestValueX());
+        itsMainGraphView.getViewport().setMaxX(senokuSpanBSeries.getHighestValueX());
         itsMainGraphView.getViewport().setXAxisBoundsManual(true);
     }
 
@@ -183,6 +211,7 @@ public class ChartActivityFragment extends Fragment {
         senokuSpanASeries = new LineGraphSeries<>();
         senokuSpanBSeries = new LineGraphSeries<>();
         closeSeries = prepareGenericSeries(EChartSerie.CLOSE_VAL);
+        closeSeries.setOnDataPointTapListener(onDataPointTapListener);
         tekanSenSeries = prepareGenericSeries(EChartSerie.TEKAN_SEN);
         kijunSenSeries = prepareGenericSeries(EChartSerie.KIJUN_SEN);
         chikouSpanSeries = prepareGenericSeries(EChartSerie.CHIKOU_SPAN);
