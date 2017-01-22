@@ -30,8 +30,8 @@ public class DataCenter {
     }
 
 
-    public void acquireData() {
-        itsDataDownloader.downloadDataFile(itsActivity.getApplicationContext());
+    public void acquireData(String symbolName) {
+        itsDataDownloader.downloadDataFile(symbolName, itsActivity.getApplicationContext());
     }
 
 

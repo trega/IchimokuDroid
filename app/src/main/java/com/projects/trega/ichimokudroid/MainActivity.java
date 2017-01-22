@@ -3,13 +3,13 @@ package com.projects.trega.ichimokudroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
@@ -23,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     DataCenter itsDataCenter;
     File itsStockFile;
 
-    private String defaultDataFilePath = "/storage/emulated/0/Documents/cdr_d.csv.txt";
+    private String symbolName;
+    private String dataFileName;
+    private String dataFilePath = "/storage/emulated/0/Documents/cdr_d.csv.txt";
 
 
     @Override
@@ -34,14 +36,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                EditText symbolNameEt = (EditText)findViewById(R.id.symbolValEt);
+                symbolName = symbolNameEt.getText().toString();
+                dataFileName = symbolName + "_d.csv.txt";
+                dataFilePath = "/storage/emulated/0/Documents/" + dataFileName;
 
-                File tmpFile = new File(defaultDataFilePath);
-                if(!tmpFile.exists())
-                    itsDataCenter.acquireData();
+                File tmpFile = new File(dataFilePath);
+                if(!tmpFile.exists()) {
+                    itsDataCenter.acquireData(symbolName);
+                }
                 else {
                     itsStockFile=tmpFile;
                     String message = "File already exists, not downloading again: " + itsStockFile.getAbsolutePath();
