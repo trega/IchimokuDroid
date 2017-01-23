@@ -74,39 +74,57 @@ public class DataContainer {
     }
 
     void calculateSenkouSpanA(){
-        long timeStep = calculateTimeStep();
         senokuSpanA = new ArrayList<>(stockRecords.size());
         int kijunOffset = 26;
         int tekanOffset = 9;
         for (int i = kijunOffset; i < stockRecords.size(); ++i){
             ChartPoint st = stockRecords.get(i);
-            ChartPoint kijun = kijunSen.get(i-kijunOffset);
+            ChartPoint kijun = kijunSen.get(i - kijunOffset);
             ChartPoint tekan = tekanSen.get(i - tekanOffset);
-            ChartPoint senoku = new ChartPoint(new Date(st.date.getTime() + 26*timeStep), avgClosePrice(kijun, tekan));
-            senokuSpanA.add(senoku);
+            double senokuAVal = avgClosePrice(kijun, tekan);
+            Date senokuADate = calculateSenokuShiftedDate(i);
+            senokuSpanA.add(new ChartPoint(senokuADate, senokuAVal));
         }
     }
 
     void calculateSenkouSpanB(){
-        long timeStep = calculateTimeStep();
         senokuSpanB = new ArrayList<>(stockRecords.size());
-        int kijunOffset = 26;
         int offset = 52;
         for (int i = offset; i < stockRecords.size(); ++i){
             ChartPoint st = stockRecords.get(i);
             ChartPoint stMax = maxCloseInIdxRange(i-offset, i);
             ChartPoint stMin = minCloseInIdxRange(i-offset, i);
-            double val = avgClosePrice(stMax, stMin);
-            senokuSpanB.add(new ChartPoint(new Date(st.date.getTime() + kijunOffset*timeStep), val));
+            double senokuBVal = avgClosePrice(stMax, stMin);
+            Date senokuADate = calculateSenokuShiftedDate(i);
+            senokuSpanB.add(new ChartPoint(senokuADate, senokuBVal));
         }
+    }
+
+    Date calculateSenokuShiftedDate(int i){
+        int dataLength = stockRecords.size();
+        long timeStep = calculateTimeStep();
+        int senokuShift = 26;
+        Date senokuDate = null;
+        if(i < (dataLength - senokuShift)){
+            senokuDate = stockRecords.get(i+senokuShift).date;
+        }else{
+            senokuDate = new Date(stockRecords.get(dataLength-1).date.getTime() + timeStep*(senokuShift-(dataLength -i-1)));
+        }
+        return senokuDate;
     }
 
     void calculateChikouSpan(){
         long timeStep = calculateTimeStep();
         chikouSpan = new ArrayList<>(stockRecords.size());
-        for(int i = 0; i<stockRecords.size(); ++i){
+        int chikouShift = 26;
+        for(int i = 0; i<chikouShift; ++i){
             ChartPoint sr = stockRecords.get(i);
-            ChartPoint cp = new ChartPoint(new Date(sr.date.getTime()- 26*timeStep), sr.value);
+            ChartPoint cp = new ChartPoint(new Date(sr.date.getTime()- chikouShift*timeStep), sr.value);
+            chikouSpan.add(cp);
+        }
+        for(int i = chikouShift; i<stockRecords.size(); ++i){
+            ChartPoint sr = stockRecords.get(i);
+            ChartPoint cp = new ChartPoint(stockRecords.get(i-chikouShift).date, sr.value);
             chikouSpan.add(cp);
         }
     }

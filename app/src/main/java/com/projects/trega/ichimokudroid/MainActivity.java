@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private DownloadParametersBoundle downloadParametersBundle;
     private final String[] symbols ={"YOL", "WAS", "DPL", "OPF", "MEX", "LVC", "WPL", "TIM", "APR",
     "KSG", "TRK", "CAR", "RES", "PFL", "IPT", "CDR", "CLN", "MRC", "MLK", "COG", "UNI", "KTY", "GPW",
-    "GTN", "PBG", "ALM", "RDL", "PKN", "ACT", "JSW"};
+    "GTN", "PBG", "ALM", "RDL", "PKN", "ACT", "JSW", "ATT", "CCC", "ALR", "PXM", };
+
 
 
     @Override
