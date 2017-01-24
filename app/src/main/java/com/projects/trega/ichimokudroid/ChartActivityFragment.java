@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -21,6 +22,7 @@ import com.jjoe64.graphview.series.Series;
 import com.projects.trega.ichimokudroid.DataProvider.ChartPoint;
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,8 +183,12 @@ public class ChartActivityFragment extends Fragment {
     }
 
     private void prepareLabels() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(2);
+        itsMainGraphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(nf, nf));
         itsMainGraphView.getGridLabelRenderer().setHumanRounding(false);
         itsMainGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(itsMainGraphView.getContext()));
+        itsMainGraphView.getGridLabelRenderer().setNumHorizontalLabels(7);
     }
 
     private void prepareViewPort(int dataLength) {

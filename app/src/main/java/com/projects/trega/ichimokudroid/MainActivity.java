@@ -35,11 +35,14 @@ public class MainActivity extends AppCompatActivity {
     private String dataFileName;
     private String dataFilePath;
     private DownloadParametersBoundle downloadParametersBundle;
-    private final String[] symbols ={"YOL", "WAS", "DPL", "OPF", "MEX", "LVC", "WPL", "TIM", "APR",
-    "KSG", "TRK", "CAR", "RES", "PFL", "IPT", "CDR", "CLN", "MRC", "MLK", "COG", "UNI", "KTY", "GPW",
-    "GTN", "PBG", "ALM", "RDL", "PKN", "ACT", "JSW", "ATT", "CCC", "ALR", "PXM", };
-
-
+    private final String[] symbols ={
+            "ACP", "ACT", "ALI", "ALM", "ALR", "APR", "ATT", "BRI", "BZW", "CAR", "CCC", "CDR",
+            "CEZ", "CIE", "CLN", "COG", "CPS", "CPS", "DPL", "ENA", "ENG", "EUR", "GNB", "GPW",
+            "IPT", "JSW", "KGH", "KRU", "KSG", "KTY", "KZS", "LPP", "LTS", "LVC", "LWB", "MBK",
+            "MEX", "MIL", "MLK", "MRB", "MRC", "NET", "OIL", "OPF", "OPL", "OPN", "PBG", "PDZ",
+            "PEO", "PFL", "PGN", "PKN", "PKO", "PND", "PXM", "PZU", "RDL", "RDN", "RES", "SEN",
+            "SFS", "SNS", "TIM", "TPE", "TRK", "TRN", "UNI", "WAS", "WPL", "YOL"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date currentTime = c.getTime();
-        c.add(Calendar.YEAR, -1);
+        c.add(Calendar.YEAR, -2);
         Date yearBackTime = c.getTime();
         String formattedDateCurrent = df.format(currentTime);
         String[] currentDateArray = formattedDateCurrent.split("-");
