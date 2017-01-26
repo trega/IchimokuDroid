@@ -1,18 +1,19 @@
 package com.projects.trega.ichimokudroid;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
@@ -23,7 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.projects.trega.ichimokudroid.CommonInterface.*;
+import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_FILE_NAME;
+import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_SYMBOL;
 
 public class MainActivity extends AppCompatActivity {
     static String TAG ="MAIN_ACTIVITY";
@@ -54,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         initializeSymbolEditBox();
 
 
+        initializeFloatingButtons();
+    }
+
+    private void initializeFloatingButtons() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +78,29 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, message);
                     dataReady(itsStockFile);
                 }
+            }
+        });
+
+        FloatingActionButton butCleanStorage = (FloatingActionButton) findViewById(R.id.butCleanStorage);
+        butCleanStorage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.CustomDialogBoxStyle);
+                builder.setMessage("Do you want to remove all files in:\n"+getString(R.string.storagePath ))
+                        .setTitle("Clear data storage").setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        File storageDir = new File (getString(R.string.storagePath));
+                        for(File file: storageDir.listFiles())
+                            if (!file.isDirectory())
+                                file.delete();
+                    }
+                })                ;
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -110,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 pastDateArray[0], pastDateArray[1], pastDateArray[2]);
         dataFileName = symbolName + "_d.csv_"+downloadParametersBundle.getPastDateDownloadString()+
                 "_"+downloadParametersBundle.getCurrentDateDownloadString()+".txt";
-        dataFilePath = "/storage/emulated/0/Documents/" + dataFileName;
+        dataFilePath = getString(R.string.storagePath) + dataFileName;
 
     }
 
