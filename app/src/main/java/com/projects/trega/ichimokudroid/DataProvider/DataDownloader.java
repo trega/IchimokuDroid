@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 public class DataDownloader implements Response.Listener<byte[]>, Response.ErrorListener {
     DownloadParametersBoundle downloadParametersBoundle;
     private final String TAG = "DATA_DOWNLOADER";
-    private final String baseDataCenterAddress = "http://stooq.com/";
+    private final String baseDataCenterAddress = "https://stooq.com/";
     private final String appendix1 = "q/d/l/?s=";
     private final String suffix = "&d1=20160119&d2=20170119&i=d";
 //    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20160119&d2=20170119&i=d";
@@ -31,6 +32,7 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     int count;
     File currentStockFile;
     DataCenter itsDataCenter;
+    private RequestQueue mRequestQueue;
 
     public DataDownloader(DataCenter dataCenter) {
         itsDataCenter = dataCenter;
@@ -44,9 +46,16 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                 "&i=d";
         request = new InputStreamVolleyRequest(Request.Method.GET, dataCenterAddress,
                 DataDownloader.this, DataDownloader.this, null);
-        RequestQueue mRequestQueue = Volley.newRequestQueue(ctx, new HurlStack());
-        mRequestQueue.add(request);
+//        request.setRetryPolicy(new DefaultRetryPolicy(1000, 5, 1.0f));
+        queueNewRequest(ctx, request);
         return true;
+    }
+
+    private void queueNewRequest(Context ctx, InputStreamVolleyRequest request) {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(ctx);
+        }
+        mRequestQueue.add(request);
     }
 
     @Override
