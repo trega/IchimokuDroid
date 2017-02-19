@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -21,6 +22,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 import com.projects.trega.ichimokudroid.DataProvider.ChartPoint;
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
+import com.projects.trega.ichimokudroid.DataProvider.StockRecord;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -39,6 +41,8 @@ public class ChartActivityFragment extends Fragment {
     private LineGraphSeries<DataPoint> senokuSpanBSeries;
     private OnDataPointTapListener onDataPointTapListener;
     private View rootFragmentView;
+    private TextView latestDateValueTv;
+    private TextView latestStockValueTv;
 
     public enum EChartSerie {
         CLOSE_VAL,
@@ -57,6 +61,8 @@ public class ChartActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootFragmentView = inflater.inflate(R.layout.fragment_chart, container, false);
         itsMainGraphView = (GraphView) rootFragmentView.findViewById(R.id.main_graph);
+        latestDateValueTv = (TextView)rootFragmentView.findViewById(R.id.DateValueTv);
+        latestStockValueTv = (TextView)rootFragmentView.findViewById(R.id.LatestPriceValueTv);
         return rootFragmentView;
     }
 
@@ -66,6 +72,18 @@ public class ChartActivityFragment extends Fragment {
         itsActivity = (ChartActivity) getActivity();
         itsDataCenter = itsActivity.getDataCenter();
         drawMainChart();
+        itsActivity.getLatestStockValue(this);
+    }
+
+    public void updateCurrentStockValue(final StockRecord sr){
+        final String formattedDate = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(sr.date);
+        itsActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                latestDateValueTv.setText(formattedDate);
+                latestStockValueTv.setText(sr.close.toString());
+            }
+        });
     }
 
     private void prepareCallbacks() {

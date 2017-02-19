@@ -14,8 +14,13 @@ public class StockRecord {
     public Double close;
     public Integer volume;
 
-    public StockRecord(String aDate, String aOpen, String aHigh, String aLow, String aClose, String aVolume){
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+    public StockRecord(String aDate, String aOpen, String aHigh, String aLow, String aClose, String aVolume) {
+        this(aDate,aOpen,aHigh,aLow,aClose,aVolume,"yyyy-MM-dd");
+    }
+
+    public StockRecord(String aDate, String aOpen, String aHigh, String aLow, String aClose, String aVolume, String dateFormat){
+        DateFormat df = new SimpleDateFormat(dateFormat);
         try {
             date = df.parse(aDate);
         } catch (ParseException e) {

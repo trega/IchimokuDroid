@@ -11,8 +11,42 @@
     tools:context="com.projects.trega.ichimokudroid.ChartActivityFragment"
     tools:showIn="@layout/activity_chart">
 
+    <LinearLayout
+        android:id="@+id/summaryLL"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:id="@+id/DateLabelTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"/>
+        <Space
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/DateValueTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2017-02-18 17:01:00"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/LatestPriceValueTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="23.56"/>
+    </LinearLayout>
+
     <com.jjoe64.graphview.GraphView
+        android:layout_below="@+id/summaryLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_graph" />
+
+
+
 </RelativeLayout>

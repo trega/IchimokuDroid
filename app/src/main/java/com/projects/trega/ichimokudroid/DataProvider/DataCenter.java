@@ -2,6 +2,7 @@ package com.projects.trega.ichimokudroid.DataProvider;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.projects.trega.ichimokudroid.ChartActivity;
 import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 import com.projects.trega.ichimokudroid.MainActivity;
 
@@ -102,5 +103,14 @@ public class DataCenter {
 
     public String findEntryByDateStr(Date date) {
         return itsDataContainer.findEntryByDateStr(date);
+    }
+
+    public void getLatestStockValue(String symbolName) {
+        itsDataDownloader.getLatestStockValue(itsActivity.getApplicationContext(), symbolName);
+    }
+
+    public void latestStockValueReceived(String response) {
+        StockRecord sr = itsFileParser.parseSingleRecord(response);
+        ((ChartActivity)itsActivity).latestStockValueReceived(sr);
     }
 }

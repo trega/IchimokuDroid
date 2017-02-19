@@ -1,5 +1,6 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -10,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 
@@ -26,8 +28,10 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     private final String TAG = "DATA_DOWNLOADER";
     private final String baseDataCenterAddress = "https://stooq.com/";
     private final String appendix1 = "q/d/l/?s=";
+    private final String appendix2 = "q/l/?s=";
     private final String suffix = "&d1=20160119&d2=20170119&i=d";
 //    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20160119&d2=20170119&i=d";
+//    private final String dplLatestUrl = "https://stooq.com/q/l/?s=dpl&f=sd2t2ohlcv&h&e=txt";
     private InputStreamVolleyRequest request;
     int count;
     File currentStockFile;
@@ -46,12 +50,29 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                 "&i=d";
         request = new InputStreamVolleyRequest(Request.Method.GET, dataCenterAddress,
                 DataDownloader.this, DataDownloader.this, null);
-//        request.setRetryPolicy(new DefaultRetryPolicy(1000, 5, 1.0f));
         queueNewRequest(ctx, request);
         return true;
     }
 
-    private void queueNewRequest(Context ctx, InputStreamVolleyRequest request) {
+    public Boolean getLatestStockValue(Context ctx, String symbolName){
+        String url = baseDataCenterAddress + appendix2 + symbolName + "&e=txt";
+        StringRequest strReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Received Response: \n" + response);
+                itsDataCenter.latestStockValueReceived(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "LatestValue: " + error.getMessage());
+            }
+        });
+        queueNewRequest(ctx, strReq);
+        return true;
+    }
+
+    private void queueNewRequest(Context ctx, Request request) {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(ctx);
         }

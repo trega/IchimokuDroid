@@ -7,8 +7,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.projects.trega.ichimokudroid.DataProvider.DataCenter;
+import com.projects.trega.ichimokudroid.DataProvider.StockRecord;
 
 import java.io.File;
 
@@ -16,6 +18,8 @@ public class ChartActivity extends AppCompatActivity {
 
     DataCenter itsDataCenter = null;
     File itsStockFile = null;
+    private String symbolName;
+    private ChartActivityFragment itsChartFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +41,15 @@ public class ChartActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String stockDataFileName = intent.getStringExtra(CommonInterface.STOCK_DATA_FILE_NAME);
-        String symbolName = intent.getStringExtra(CommonInterface.STOCK_DATA_SYMBOL);
+        symbolName = intent.getStringExtra(CommonInterface.STOCK_DATA_SYMBOL);
         this.setTitle(symbolName);
         prepareChartData(stockDataFileName);
+
+    }
+
+    void getLatestStockValue(ChartActivityFragment chartActivityFragment){
+        itsChartFragment = chartActivityFragment;
+        itsDataCenter.getLatestStockValue(symbolName);
 
     }
 
@@ -53,4 +63,12 @@ public class ChartActivity extends AppCompatActivity {
         return itsDataCenter;
     }
 
+    public void latestStockValueReceived(StockRecord sr) {
+        if(itsChartFragment !=null){
+            itsChartFragment.updateCurrentStockValue(sr);
+        }else{
+            Toast.makeText(getApplicationContext(), "Chart Fragment could not be resolved",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }
