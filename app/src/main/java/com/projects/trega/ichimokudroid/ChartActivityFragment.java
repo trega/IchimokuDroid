@@ -4,12 +4,14 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -27,6 +29,7 @@ import com.projects.trega.ichimokudroid.DataProvider.StockRecord;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ChartActivityFragment extends Fragment {
@@ -55,6 +58,18 @@ public class ChartActivityFragment extends Fragment {
 
     public ChartActivityFragment() {
     }
+    private void initializeFloatingButtons() {
+        FloatingActionButton fab = (FloatingActionButton) rootFragmentView.findViewById(R.id.zoomBtn);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itsMainGraphView.getViewport().setMinX(itsDataCenter.getStockRecord(
+                        itsDataCenter.getDataLength() - 90).date.getTime());
+                itsMainGraphView.getViewport().setMaxX(senokuSpanBSeries.getHighestValueX());
+                itsMainGraphView.getViewport().setXAxisBoundsManual(true);
+            }
+        });
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,8 +78,8 @@ public class ChartActivityFragment extends Fragment {
         itsMainGraphView = (GraphView) rootFragmentView.findViewById(R.id.main_graph);
         latestDateValueTv = (TextView)rootFragmentView.findViewById(R.id.DateValueTv);
         latestStockValueTv = (TextView)rootFragmentView.findViewById(R.id.LatestPriceValueTv);
+        initializeFloatingButtons();
         return rootFragmentView;
-//        itsMainGraphView.setOn
     }
 
     @Override
@@ -120,6 +135,7 @@ public class ChartActivityFragment extends Fragment {
         addSeries();
         itsMainGraphView.getLegendRenderer().setVisible(true);
         itsMainGraphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
+        itsMainGraphView.getLegendRenderer().setFixedPosition(0,0);
     }
 
     private void adjustStyling() {
