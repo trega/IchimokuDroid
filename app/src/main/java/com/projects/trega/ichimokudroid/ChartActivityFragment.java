@@ -64,6 +64,7 @@ public class ChartActivityFragment extends Fragment {
         latestDateValueTv = (TextView)rootFragmentView.findViewById(R.id.DateValueTv);
         latestStockValueTv = (TextView)rootFragmentView.findViewById(R.id.LatestPriceValueTv);
         return rootFragmentView;
+//        itsMainGraphView.setOn
     }
 
     @Override
