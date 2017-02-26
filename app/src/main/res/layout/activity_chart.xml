@@ -31,4 +31,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <include layout="@layout/fragment_favorites" />
+
 </android.support.design.widget.CoordinatorLayout>

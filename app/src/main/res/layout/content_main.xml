@@ -15,6 +15,7 @@
 
     <TextView
         android:id="@+id/symbolLabelTv"
+        android:layout_alignParentLeft="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Symbol"
@@ -39,4 +40,17 @@
         android:dropDownHeight="wrap_content">
         <requestFocus />
     </AutoCompleteTextView>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_favorite"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:name="com.projects.trega.ichimokudroid.FavoritesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_alignLeft="@+id/symbolValEt"
+        android:layout_marginLeft="@dimen/elem_horizontal_margin_large"
+        tools:layout="@layout/fragment_favorites" />
+
 </RelativeLayout>

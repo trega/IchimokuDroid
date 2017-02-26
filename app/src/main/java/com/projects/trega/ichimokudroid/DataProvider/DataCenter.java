@@ -1,12 +1,14 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.projects.trega.ichimokudroid.ChartActivity;
 import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 import com.projects.trega.ichimokudroid.MainActivity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -112,5 +114,9 @@ public class DataCenter {
     public void latestStockValueReceived(String response) {
         StockRecord sr = itsFileParser.parseSingleRecord(response);
         ((ChartActivity)itsActivity).latestStockValueReceived(sr);
+    }
+
+    public void requestFailed(String  msg) {
+        Toast.makeText(itsActivity.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 }

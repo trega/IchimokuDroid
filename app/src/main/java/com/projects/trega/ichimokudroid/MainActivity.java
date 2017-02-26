@@ -2,6 +2,7 @@ package com.projects.trega.ichimokudroid;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +28,7 @@ import java.util.Date;
 import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_FILE_NAME;
 import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_SYMBOL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements FavoritesFragment.OnFavoriteFragmentInteractionListener{
     static String TAG ="MAIN_ACTIVITY";
     DataDownloader itsDataDownloader;
     DataCenter itsDataCenter;
@@ -58,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 extractDownloadParameters();
-
+                if(symbolName.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 File tmpFile = new File(dataFilePath);
                 if(!tmpFile.exists()) {
                     itsDataCenter.acquireData(downloadParametersBundle);
@@ -157,5 +161,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(STOCK_DATA_FILE_NAME, stockFile.getAbsolutePath());
         intent.putExtra(STOCK_DATA_SYMBOL, symbolName);
         startActivity(intent);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

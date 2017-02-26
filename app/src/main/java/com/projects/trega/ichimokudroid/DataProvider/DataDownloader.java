@@ -30,8 +30,6 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     private final String appendix1 = "q/d/l/?s=";
     private final String appendix2 = "q/l/?s=";
     private final String suffix = "&d1=20160119&d2=20170119&i=d";
-//    private final String dataCenterAddress = "http://stooq.com/q/d/l/?s=cdr&d1=20160119&d2=20170119&i=d";
-//    private final String dplLatestUrl = "https://stooq.com/q/l/?s=dpl&f=sd2t2ohlcv&h&e=txt";
     private InputStreamVolleyRequest request;
     int count;
     File currentStockFile;
@@ -82,6 +80,7 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     @Override
     public void onErrorResponse(VolleyError error) {
         Log.e(TAG, "UNABLE TO DOWNLOAD FILE. ERROR:: " + error.getMessage());
+        itsDataCenter.requestFailed("UNABLE TO DOWNLOAD FILE: " + error.getMessage());
     }
 
     @Override
@@ -127,12 +126,14 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                     itsDataCenter.fileAquireFinished(currentStockFile);
                 }catch(IOException e){
                     e.printStackTrace();
+                    itsDataCenter.requestFailed(e.getMessage());
 
                 }
             }
         } catch (Exception e) {
-            Log.d("KEY_ERROR", "UNABLE TO DOWNLOAD FILE");
+            Log.e("KEY_ERROR", "UNABLE TO DOWNLOAD FILE");
             e.printStackTrace();
+            itsDataCenter.requestFailed("UNABLE TO DOWNLOAD FILE: " + e.getMessage());
         }
     }
 }
