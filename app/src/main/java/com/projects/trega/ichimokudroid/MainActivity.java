@@ -1,9 +1,14 @@
 package com.projects.trega.ichimokudroid;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +34,7 @@ import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_FILE_N
 import static com.projects.trega.ichimokudroid.CommonInterface.STOCK_DATA_SYMBOL;
 
 public class MainActivity extends AppCompatActivity  implements FavoritesFragment.OnFavoriteFragmentInteractionListener{
+    private static final int MY_PERMISSION_STORAGE = 123;
     static String TAG ="MAIN_ACTIVITY";
     DataDownloader itsDataDownloader;
     DataCenter itsDataCenter;
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity  implements FavoritesFragmen
 
 
         initializeFloatingButtons();
+        checkPermissionStorage();
     }
 
     private void initializeFloatingButtons() {
@@ -165,6 +172,18 @@ public class MainActivity extends AppCompatActivity  implements FavoritesFragmen
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void checkPermissionStorage(){
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSION_STORAGE);
+        }
 
     }
 }

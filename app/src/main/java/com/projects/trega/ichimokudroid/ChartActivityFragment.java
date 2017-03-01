@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class ChartActivityFragment extends Fragment {
+    static final String TAG = "ChartActivityFragment";
     GraphView itsMainGraphView;
     ChartActivity itsActivity;
     DataCenter itsDataCenter;
@@ -199,6 +201,10 @@ public class ChartActivityFragment extends Fragment {
                 color = Color.RED;
                 break;
         }
+        if (indicatorData == null){
+            Log.e(TAG, "Indicatior Data is null");
+            return null;
+        }
         return produceLineGraphSerie(indicatorData, title, color);
     }
 
@@ -212,7 +218,6 @@ public class ChartActivityFragment extends Fragment {
         }
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
         series.setTitle(title);
-//        series.setOnDataPointTapListener(onDataPointTapListener);
         series.setColor(color);
         return series;
     }

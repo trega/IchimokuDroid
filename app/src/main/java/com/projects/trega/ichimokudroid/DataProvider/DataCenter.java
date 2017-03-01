@@ -48,7 +48,12 @@ public class DataCenter {
 
     public void parseStockDataFile(File itsStockFile) {
         stockFile = itsStockFile;
-        itsFileParser.parseFile(stockFile, itsDataContainer);
+        try {
+            itsFileParser.parseFile(stockFile, itsDataContainer);
+        } catch (IOException e) {
+            showToastMsg("Parse File Exception:" +  e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public int getDataLength() {
@@ -116,7 +121,7 @@ public class DataCenter {
         ((ChartActivity)itsActivity).latestStockValueReceived(sr);
     }
 
-    public void requestFailed(String  msg) {
+    public void showToastMsg(String  msg) {
         Toast.makeText(itsActivity.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 }

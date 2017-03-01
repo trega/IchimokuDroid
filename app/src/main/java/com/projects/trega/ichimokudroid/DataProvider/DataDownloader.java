@@ -1,16 +1,13 @@
 package com.projects.trega.ichimokudroid.DataProvider;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
@@ -18,6 +15,7 @@ import com.projects.trega.ichimokudroid.DownloadParametersBoundle;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +78,7 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
     @Override
     public void onErrorResponse(VolleyError error) {
         Log.e(TAG, "UNABLE TO DOWNLOAD FILE. ERROR:: " + error.getMessage());
-        itsDataCenter.requestFailed("UNABLE TO DOWNLOAD FILE: " + error.getMessage());
+        itsDataCenter.showToastMsg("UNABLE TO DOWNLOAD FILE: " + error.getMessage());
     }
 
     @Override
@@ -107,6 +105,11 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                     //covert reponse to input stream
                     InputStream input = new ByteArrayInputStream(response);
                     File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+//                    File path = new File(Environment.getExternalStorageState(), "IchimokuDroidData");
+                    if(!path.exists()  && !path.mkdir())
+                        throw new FileNotFoundException(path.toString() + " could not be created");
+                    else
+                        Log.d(TAG, path.toString() +" exists");
                     currentStockFile = new File(path, filename+".txt");
                     map.put("resume_path", currentStockFile.toString());
                     BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(currentStockFile));
@@ -126,14 +129,14 @@ public class DataDownloader implements Response.Listener<byte[]>, Response.Error
                     itsDataCenter.fileAquireFinished(currentStockFile);
                 }catch(IOException e){
                     e.printStackTrace();
-                    itsDataCenter.requestFailed(e.getMessage());
+                    itsDataCenter.showToastMsg(e.getMessage());
 
                 }
             }
         } catch (Exception e) {
             Log.e("KEY_ERROR", "UNABLE TO DOWNLOAD FILE");
             e.printStackTrace();
-            itsDataCenter.requestFailed("UNABLE TO DOWNLOAD FILE: " + e.getMessage());
+            itsDataCenter.showToastMsg("UNABLE TO DOWNLOAD FILE: " + e.getMessage());
         }
     }
 }

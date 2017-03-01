@@ -16,8 +16,8 @@ public class DataContainer {
     private ArrayList<StockRecord> stockRecordsFull;
 
     public DataContainer(){
-        stockRecordsFull = new ArrayList<StockRecord>(INITIAL_SAMPLES_NUMBER);
-        stockRecords = new ArrayList<ChartPoint>(INITIAL_SAMPLES_NUMBER);
+        stockRecordsFull = new ArrayList<StockRecord>();
+        stockRecords = new ArrayList<ChartPoint>();
     }
 
     public void addStockRecord(ChartPoint record){
@@ -63,6 +63,9 @@ public class DataContainer {
     }
 
     ArrayList<ChartPoint> calculateSen(int step){
+        if (stockRecords.size() <= step){
+            return null;
+        }
         ArrayList<ChartPoint> senList = new ArrayList<>(stockRecords.size()-step);
         for (int i = step; i < stockRecords.size(); ++i){
             ChartPoint stMax = maxCloseInIdxRange(i-step, i);
